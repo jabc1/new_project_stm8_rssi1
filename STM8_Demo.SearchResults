@@ -1,0 +1,6 @@
+---- A7106_WriteFIFO Matches (5 in 2 files) ----
+A7106.c (a7106):** A7106_WriteFIFO
+A7106.c (a7106):void A7106_WriteFIFO(void)
+A7106.c (a7106):** A7106_WriteFIFO
+A7106.c (a7106):void A7106_WriteFIFO(void)
+A7106.h (a7106):void A7106_WriteFIFO(void);
