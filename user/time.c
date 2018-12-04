@@ -14,12 +14,13 @@
 
 unsigned char tbuff[20] ={0};
 TIME2   Time2 = {0,0,0,0,0};
-
+unsigned char             Count1ms;
+unsigned char             TimeSlot;
 void Init_time2()
 {
     TIM2_DeInit();
     CLK_PeripheralClockConfig(CLK_Peripheral_TIM2,ENABLE);    
-    TIM2_TimeBaseInit(TIM2_Prescaler_2, TIM2_CounterMode_Up, 1000);//1ms
+    TIM2_TimeBaseInit(TIM2_Prescaler_16, TIM2_CounterMode_Up, 1000);//1ms
     TIM2_ARRPreloadConfig(ENABLE);  
     TIM2_ITConfig(TIM2_IT_Update , ENABLE);  
     TIM2_Cmd(ENABLE);
@@ -66,10 +67,22 @@ INTERRUPT_HANDLER(TIM2_UPD_OVF_TRG_BRK_USART2_TX_IRQHandler,19)
     if (TIM2_GetITStatus(TIM2_IT_Update) != RESET)
     {
         TIM2_ClearITPendingBit(TIM2_IT_Update);      //清除中断标记
+        
+        Count1ms --;
+        if ( Count1ms == 0 )
+        {
+          Count1ms = 10;
+
+          TimeSlot ++;
+          if (TimeSlot >= 20)
+            TimeSlot = 0;
+        }      
+         if(Time2.count%50==0)
+            Time2.flag = TRUE;
+        
         if(Time2.count++ >= 999)//s
         {
             Time2.count = 0;
-            Time2.flag = TRUE;
             if(Time2.sec ++ >= 59)//min
             {
                 Time2.sec = 0;

@@ -50,7 +50,8 @@ fCK_SPRE=fRTCCLK(PREDIV_S+1)(PREDIV_A+1)fCK_SPRE=fRTCCLK(PREDIV_S+1)(PREDIV_A+1)
 20181121
 添加查表执行功能
 
-
+20181203
+添加rf驱动程序，进行接收rf信号
 
 
 

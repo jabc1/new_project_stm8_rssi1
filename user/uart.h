@@ -30,7 +30,7 @@ void Init_uart(void);
 void uart_test(void);
 void uart_fifo(void);
 void UART1_SendByte(u8 data);
-
+void UART1_SendStr(u8 *str);
 
 
 #endif

@@ -20,15 +20,15 @@ COM4------PD1
 #define         LCDCOM4         GPIOD      
 #define         LCDCOM4_Pin     GPIO_Pin_1
 
-
-
-
-
-
 #define         SET_GPIO_OUT_H(x)        GPIO_Init(x,x##_Pin, GPIO_Mode_Out_PP_High_Fast)
 extern uint8_t  LCM_Num[];
+
 extern const uint8 LCD_CodeTable[];
 void LCD_init(void);
-
+void led_show(uint16_t x);
+void LCD_WriteNum1(u8 bNum);
+void LCD_WriteNum2(u8 bNum);
+void LCD_WriteNum3(u8 bNum);
+void LCD_WriteNum4(u8 bNum);
 #endif
 

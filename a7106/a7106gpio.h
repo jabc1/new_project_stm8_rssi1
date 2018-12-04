@@ -37,6 +37,7 @@ GIO2--->PF0
 #define     LED_Pin         GPIO_Pin_6
 
 #define     SET_GPIO_OUT(x)        GPIO_Init(x,x##_Pin, GPIO_Mode_Out_PP_High_Fast)
+#define     SET_GPIO_OUT2(x)        GPIO_Init(x,x##_Pin, GPIO_Mode_Out_OD_HiZ_Fast)
 #define     SET_GPIO_IN(x)         GPIO_Init(x,x##_Pin, GPIO_Mode_In_PU_No_IT)   
 #define     SET_GPIO_H(x)          GPIO_SetBits(x,x##_Pin) 
 #define     SET_GPIO_L(x)          GPIO_ResetBits(x,x##_Pin) 
@@ -45,7 +46,7 @@ GIO2--->PF0
 
 
 void A7106_GPIO_init(void);
-
+void delay_us(uint16_t num);
 #endif
 
 

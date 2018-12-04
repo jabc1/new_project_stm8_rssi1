@@ -13,7 +13,7 @@ typedef struct
 }TIME2;
 #pragma pack(pop)
 
-
+extern TIME2   Time2;
 
 void Init_time2(void);
 void tiem2_test(void);

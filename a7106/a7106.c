@@ -1,18 +1,37 @@
 #include "a7106.h"
 #include "a7106reg.h"
 #include "a7106gpio.h"
-
+#include "string.h"
+#include "time.h"
+#include "uart.h"
 
 #define     speed       1//26us
-
+extern unsigned char             Count1ms;
+extern unsigned char             TimeSlot;
 void test_rf()
 {
-    SET_GPIO_OUT(LED);
+    uint16_t num;
     while(1)
     {
-        //GPIO_ToggleBits(LED,LED_Pin);
-        SET_GPIO_H(LED);
-        SET_GPIO_L(LED);
+      SetCH(RfTab[0]);
+      StrobeCmd(CMD_RX);
+      while(GPIO_ReadInputDataBit(SDIOPROT,SDIOPROT_Pin));
+      RxPacket();	
+      /*
+      if(Time2.flag == TRUE)
+      {
+        Time2.flag = FALSE;
+        num++;
+        led_show(num);
+      }  
+      */
+ /*     
+        A7106_WriteFIFO(); //write data to tx fifo
+        //Tx time-slot
+        delay_ms(100);
+        StrobeCmd(CMD_TX);
+        while(GPIO_ReadInputDataBit(SDIOPROT,SDIOPROT_Pin));
+*/
     }
 }
 /*********************************************************************
@@ -21,17 +40,14 @@ void test_rf()
 void initRF(void)
 {
     A7106_GPIO_init();
-    
-    //A7106_WriteReg(1,0x62);
-
     A7106_Reset();  //reset A7106 RF chip
     A7106_WriteID();//write ID code
-    A7106_WriteReg(CPC_REG, 0x77);    // RGC=3
+    A7106_WriteReg(CPC_REG, 0x77);// RGC=3
     A7106_Config(); //config A7106 chip
     A7106_WriteReg(CPC_REG, 0x57);    // RGC=1
     A7106_Cal();    //calibration IF,vco, vcoc
-    A7106_RCO_Cal(); // calibration RC Osc (OPTION)
-    //test_rf();
+    A7106_RCO_Cal(); //calibration RC Osc (OPTION)
+    test_rf();
 }
 
 /************************************************************************
@@ -48,14 +64,12 @@ void A7106_Reset(void)
 void A7106_WriteID(void)
 {
     Uint8 i;
-
-
     SET_GPIO_L(CSCPROT);
     ByteSend(IDCODE_REG);
     for (i=0; i < 4; i++)
         ByteSend(ID_Tab[i]);
     SET_GPIO_H(CSCPROT);
-
+    //delay_us(200);
     //for check
     SET_GPIO_L(CSCPROT);
     ByteSend(IDCODE_REG | 0x40);
@@ -73,31 +87,32 @@ void A7106_WriteID(void)
 void A7106_WriteReg(Uint8 addr, Uint8 dataByte)
 {
     Uint8 i;
-    SET_GPIO_OUT(SDIOPROT);
     SET_GPIO_L(CSCPROT);
+    SET_GPIO_OUT(SDIOPROT);
     for(i=0;i<8;i++)
     {
-        SET_GPIO_H(SCKPROT);
         if(addr & 0x80)
             SET_GPIO_H(SDIOPROT);
         else
             SET_GPIO_L(SDIOPROT);
-   
-
+        SET_GPIO_H(SCKPROT);  
+        delay_us(9);
         SET_GPIO_L(SCKPROT);
+        delay_us(4);
         addr = addr << 1;
     }
     //send data byte
     for(i = 0; i < 8; i++)
     {
-        SET_GPIO_H(SCKPROT);
+        
         if(dataByte & 0x80)
             SET_GPIO_H(SDIOPROT);
         else
             SET_GPIO_L(SDIOPROT);
-
-
+        SET_GPIO_H(SCKPROT);  
+          delay_us(9);
         SET_GPIO_L(SCKPROT);
+          delay_us(4);
         dataByte = dataByte<< 1;
     }
     SET_GPIO_H(CSCPROT);    
@@ -115,13 +130,15 @@ Uint8 A7106_ReadReg(Uint8 addr)
     addr |= 0x40; //bit cmd=0,r/w=1
     for(i = 0; i < 8; i++)
     {
-        SET_GPIO_H(SCKPROT);
+
         if(addr & 0x80)
             SET_GPIO_H(SDIOPROT);
         else
             SET_GPIO_L(SDIOPROT);
-
+        SET_GPIO_H(SCKPROT);  
+         delay_us(9);
         SET_GPIO_L(SCKPROT);
+         delay_us(4);
         addr = addr << 1;
     }
 
@@ -131,15 +148,15 @@ Uint8 A7106_ReadReg(Uint8 addr)
     //read data
     for(i = 0; i < 8; i++)
     {
-        SET_GPIO_H(SCKPROT);
         //if(Read_GPIO(SDIOPROT))
         if(GPIO_ReadInputDataBit(SDIOPROT,SDIOPROT_Pin))
             tmp = (tmp << 1) | 0x01;
         else
             tmp = tmp << 1;
-
-        
+        SET_GPIO_H(SCKPROT);  
+         delay_us(9);
         SET_GPIO_L(SCKPROT);
+          delay_us(4);
     }
     SET_GPIO_H(CSCPROT);
     return tmp;
@@ -154,14 +171,15 @@ void ByteSend(Uint8 src)
 
     for(i = 0; i < 8; i++)
     {
-        SET_GPIO_H(SCKPROT);
+
         if(src & 0x80)
             SET_GPIO_H(SDIOPROT);
         else
             SET_GPIO_L(SDIOPROT);
-
-       
+        SET_GPIO_H(SCKPROT);  
+          delay_us(9);
         SET_GPIO_L(SCKPROT);
+          delay_us(4);
         src = src << 1;
     }
 }
@@ -171,21 +189,22 @@ void ByteSend(Uint8 src)
 Uint8 ByteRead(void)
 {
     Uint8 i,tmp;
-
-    SET_GPIO_H(SDIOPROT);
     SET_GPIO_IN(SDIOPROT);
-
+    SET_GPIO_H(SDIOPROT);
     for(i = 0; i < 8; i++)
     {
-        SET_GPIO_H(SCKPROT);
-        //if(Read_GPIO(SDIOPROT))
-        if(GPIO_ReadInputDataBit(SDIOPROT,SDIOPROT_Pin))
+        if(Read_GPIO(SDIOPROT))
+        //if(GPIO_ReadInputDataBit(SDIOPROT,SDIOPROT_Pin))
             tmp = (tmp << 1) | 0x01;
         else
             tmp = tmp << 1;
         
+        SET_GPIO_H(SCKPROT);  
+          delay_us(9);
         SET_GPIO_L(SCKPROT);
+          delay_us(5);
     }
+    SET_GPIO_L(SDIOPROT);
     return tmp;
 }
 /*********************************************************************
@@ -230,8 +249,9 @@ void RxPacket(void)
     RxCnt++;
 
     SET_GPIO_L(CSCPROT);
+    memset(tmpbuf,0,64);
     ByteSend(FIFO_REG | 0x40);
-    for(i=0; i <64; i++)
+    for(i=0; i <10; i++)
     {
         recv = ByteRead();
         tmpbuf[i]=recv;
@@ -242,6 +262,9 @@ void RxPacket(void)
         }
     }
     SET_GPIO_H(CSCPROT);
+    //UART1_SendStr("test");
+    //UART1_SendStr(tmpbuf);
+    //UART1_SendStrlen(tmpbuf,60);
 }
 /*********************************************************************
 ** Err_State

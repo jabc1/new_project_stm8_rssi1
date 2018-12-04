@@ -12,7 +12,27 @@ Uint8           tmpbuf[64];
 Uint8           Seq;
 Uint8           Err_HopCnt;
 const Uint8  BitCount_Tab[16] = {0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4};
+#if 0
 const Uint8  ID_Tab[4]={0x54,0x75,0xC5,0x2A}; //ID code
+const Uint8 HopTab[5]=
+{
+    22, //2411M
+    42, //2421M
+    82, //2441
+    122,//2461
+    162 //2481
+};
+#else
+const Uint8  ID_Tab[4]={0xa5,0xaa,0x55,0x2d}; //ID code
+const Uint8 RfTab[4]=
+{
+    20,//2410M
+    40,//2420M
+    60,//2430M
+    80,//2440M
+};
+
+#endif
 const Uint8  PN9_Tab[]=
 {   0xFF,0x83,0xDF,0x17,0x32,0x09,0x4E,0xD1,
     0xE7,0xCD,0x8A,0x91,0xC6,0xD5,0xC4,0xC4,
@@ -80,22 +100,6 @@ const Uint16  A7106Config[]=
     0x0F,   //0x31  ; RSCALE_REG
     0x00,   //0x32  ; FILTERTEST_REG
     0x7F,   //0x33  ; TMV_REG           Ramp Up / Ramp Down enable
-};
-
-const Uint8 HopTab[5]=
-{
-    22, //2411M
-    42, //2421M
-    82, //2441
-    122,//2461
-    162 //2481
-};
-const Uint8 RfTab[4]=
-{
-    20,//2410M
-    40,//2420M
-    60,//2430M
-    80,//2440M
 };
 
 

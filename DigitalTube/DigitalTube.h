@@ -16,6 +16,25 @@ F-----------PC7
 G-----------PB2
 pint-------PB0
 */
+#define         a               0x01
+#define         b               0x02
+#define         c               0x04
+#define         d               0x08
+#define         e               0x10
+#define         f               0x20
+#define         g               0x40
+#define         pint            0x80
+
+#define         One             a+b
+#define         Two             a+b+g+e+d
+#define         Three           a+b+g+c+d
+#define         Four            f+b+c+g
+#define         Five            a+f+g+c+d
+#define         Six             a+f+e+g+c+d
+#define         Seven           a+b+c
+#define         Eight           a+b+c+d+e+f+g
+#define         Nine            a+b+c+f+g+d
+#define         Zero            a+b+c+d+e+f
 
 #define     COM1             GPIOE
 #define     COM1_Pin         GPIO_Pin_7
@@ -45,6 +64,12 @@ pint-------PB0
 
 
 void Digital_TubeInit(void);
-
+void show(unsigned char x);
+void show_qian(unsigned char qian);
+void show_bai(unsigned char bai);
+void show_shi(unsigned char shi);
+void show_ge(unsigned char ge);
+void Digital_show(uint16_t x);
+void num_test(void);
 #endif
 

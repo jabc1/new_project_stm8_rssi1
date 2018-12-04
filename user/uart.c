@@ -66,14 +66,21 @@ void UART1_SendStr(u8 *str)
         UART1_SendByte(*str++); /* 循环调用发送一个字符函数 */
     }   
 }
-
+void UART1_SendStrlen(u8 *str,u8 len)
+{
+    u8 temp;
+    for(temp = 0;temp < len;temp ++)
+    {
+        UART1_SendByte(*str++); 
+    }   
+}
 void uart_test()
 {
 
     if((Uart1.time-- == 0)&&(Uart1.flag == TRUE))
     {
         //Msg_deal(Uart1.buff,Uart1.len);
-        //UART1_SendStr(Uart1.buff);
+        UART1_SendStr(Uart1.buff);
         vfunction(Uart1.buff);
         memset(Uart1.buff,0,sizeof(Uart1.buff));
         Uart1.flag = FALSE;

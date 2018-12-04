@@ -36,23 +36,7 @@
 #include "a7106.h"
 #include "DigitalTube.h"
 #include "LCD.h"
-/** @addtogroup STM8L15x_StdPeriph_Template
-  * @{
-  */
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-
-/* Private functions ---------------------------------------------------------*/
-
-/**
-  * @brief  Main program.
-  * @param  None
-  * @retval None
-  */
 void delay()
 {
   uint16_t t;
@@ -60,40 +44,44 @@ void delay()
     ;
 }
 
-
-
 void main(void)
 {
-    /*
+    u8 buff[64] = {0,};
+    uint16_t num=0;
+    delay();   
+/*
     CLK_SYSCLKSourceSwitchCmd(ENABLE); 
     CLK_SYSCLKSourceConfig(CLK_SYSCLKSource_HSI); 
     CLK_SYSCLKDivConfig(CLK_SYSCLKDiv_1); 
     while (CLK_GetSYSCLKSource() != CLK_SYSCLKSource_HSI) 
     {   } 
-   */ 
-    delay();
-    
+*/
     Init_rtc();
     Init_time2();
     Init_gpio();
-    Digital_TubeInit();
-    LCD_init();
     Init_uart();
-    //test_rf();
+    //LCD_init();
+    //Digital_TubeInit();
     //FifoInit(&Uart_Tx,Uart_Tx_buff,Uart_Tx_len);
     //FifoInit(&Uart_Rx,Uart_Rx_buff,Uart_Rx_len);
     //Queue_Init(&Uart_Rx12,Uart_Rx_buff,Uart_Rx_len,2);
     //IWDG_Init();
-    //initRF();
-    //Inti_lowpower();
     rim();//开启系统总中断
+    //num_test();
+    initRF();
+    //Inti_lowpower();
     //UART1_SendByte(0x61);
-    //delay();
-    //GPIO_Init(GPIOA,GPIO_Pin_6, GPIO_Mode_Out_PP_High_Fast);
-    while (1)
+    while(1)
     {
         //IWDG_ReloadCounter();
         uart_test();
+        if(Time2.flag == TRUE)
+        {
+          Time2.flag = FALSE;
+          num++;
+          led_show(num);
+          UART1_SendStrlen(buff,64);
+        }
         //tiem2_test();
         //halt();
     }
