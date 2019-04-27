@@ -1,4 +1,4 @@
----- CKOPROT Matches (3 in 2 files) ----
-A7106gpio.c (a7106):    SET_GPIO_OUT(CKOPROT);
-A7106gpio.c (a7106):    SET_GPIO_H(CKOPROT);
-A7106gpio.h (a7106):#define     CKOPROT          GPIOD
+---- Msg_deal Matches (3 in 3 files) ----
+Function.c (function):bool Msg_deal(u8 *data,u16 len)
+Function.h (function):bool Msg_deal(u8 *data,u16 len);
+Uart.c (user):        //Msg_deal(Uart1.buff,Uart1.len);
